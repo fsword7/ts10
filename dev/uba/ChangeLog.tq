@@ -1,0 +1,14 @@
+v0.0 - 10/18/2002 by Timothy Stark <sword7@speakeasy.org>
+---------------------------------------------------------
+* Initial TMSCP implementation with using 'rq.c' file.
+* Renamed all functions to tq_ and TQ_ prefix names.
+* Replaced disk drive tables for new initial (TK50, TK70, and TU81)
+  tape drive table.
+* Added TMSCP parameters and commands to mscp.h file.
+* Changed default CSR address to 774500 from 772150.
+* Rewrote some MSCP commands to use tape specific parameters.
+* Attempted to compile that and fixed some errors.
+* Fixed a bug in response packet routine because it failed to
+  recongize packets as TMSCP type (connection id).
+* OpenVMS now recongized that TK50, TK70, and TU81 tape controller
+  as PTA0: and MUA0: according to 'show device' command.

@@ -1,0 +1,90 @@
+PDP-11 Emulator v0.7 (Alpha)
+----------------------------
+
+This PDP-11 emulator emulates F11 and J11 microprocessor for MicroPDP
+machines.  FP11 and CIS are not implemented yet (still under
+developement).
+
+Current Development Status
+--------------------------
+KDF11 Processor - FP11/CIS Not implemented Yet.
+KDJ11 Processor - FP11/CIS Not Implemented Yet.
+(Other processors like KA11, etc. may be implemented some day.)
+
+KDF11 Series Processor
+----------------------
+Some F11 implementation is not finished yet but RT-11 and XXDP operating
+system will boot successfully.
+
+KDJ11 Series Processor
+----------------------
+Use BDV11 boot device with 4K BDV11 firmware at this time.  I attempted
+to boot KDJ11B firmware but it crashed quickly due to MRV12 boot device
+(incompatible) with 'E 76' message on screen.  I am looking for complete
+MRV-11D Universal specs to implement.
+
+On XXDP tests, all basic instructions passed on ZKDJB2.BIC.
+
+Bootstrap Images
+----------------
+This PDP-11 emulator supports firmwares to boot any devices.  There
+are three known bootstraps: BDV11, KDF11B-BE, and KDF11B-BH firmware
+images.  You can find them through Internet.
+
+If you want to develop own bootstrap with public domain bootstrap images,
+make sure that default start address is 173000 because this PDP-11 emulator
+always start at that location.  To get public domain bootstraps, check
+ftp://ftp.dbit.com.
+
+I have a copy of 32K KDJ11B firmware image but it is not compatible with
+current BDV11 and MRV12 boot device implementation.  I still am looking
+for more MRV11 series specs like MRV11D, etc. to able execute KDJ11B
+firmware image.
+
+Operating Systems
+-----------------
+This PDP-11 emulator supports many operating systems.  However, some
+might not work properly due to lack of DEC operating systems here.
+Only two known operating systems successfully booted - RT-11 v5.3 and
+XXDP v2.2/v2.5.
+
+Instructions to run the emulator
+--------------------------------
+
+This TS10 emulator now have socket interface so that you can telnet into
+the TS10 emulator by usint telnet command.
+
+$ telnet <hostname> <port>
+
+With TS10 default, its port is 5000.  You can change it in
+a 'dev/dec/dl.h' file.
+
+To run the TS10 emulator system first: (If no TS10> prompt displayed,
+just press CR key to print it.)
+
+$ ./ts10 -f kdf11.cfg  (or kdj11.cfg)
+  -------------------
+TS10>
+
+
+To enter the VAX system on other xterm or terminal, type:
+
+$ telnet localhost 5000
+  ---------------------
+Welcome to PDP-11 Emulator
+
+
+Then run system at TS10> prompt for MicroPDP:
+
+TS10> boot cpu0
+      ---------
+
+Then do something on xterm that you are telneting into.  That is all.
+
+For more information about TS10/PDP11 commands, just press '?' to list
+commads with usage information.
+
+Thank you!
+
+Timothy Stark
+sword7@speakeasy.org

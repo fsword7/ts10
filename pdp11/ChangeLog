@@ -1,0 +1,15 @@
+v0.7b - 12/3/2002 by Timothy Stark <sword7@speakeasy.org>
+---------------------------------------------------------
+* Made some corrections that make Intel C/C++ compiler so happy
+  by adding protoype declarations and correcting variable declarations
+  and mismatched conversion to eliminate many warning messages.
+
+v0.7a - 10/6/2002 by Timothy Stark <sword7@speakeasy.org>
+---------------------------------------------------------
+* Updated processor types for MFPT instruction.
+* Updated configuration optional settings rather
+  than individual processor.
+
+v0.7 - 10/4/2002 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Public Release

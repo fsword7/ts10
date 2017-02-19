@@ -1,0 +1,9 @@
+To make ts10 executable file:
+
+Just type: make
+
+If you have some problems with that compilation.  Try fix or port to
+your platform and submit patches to me.
+
+Note: ts10/VAX emulator works so well on both x86 and Alpha machines.
+Other modules are not tested yet on Alpha or big-endian machines.

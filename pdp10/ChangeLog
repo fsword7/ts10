@@ -1,0 +1,240 @@
+v0.8.8a - 12/3/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Made some corrections that make Intel C/C++ compiler happy
+  by adding some protoype declarations and removing unused 'inline'
+  from many functions to eliminate many warning messages.
+
+v0.8.8 - 8/22/2002 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Re-wrote primary protocol routines after I studied KLH10's
+  dvdte.[ch] files to learn how does RSX20F Q2 protocol works
+  due to lack of its protocol specs (tech. manual).
+* Implemented delayed acknowledge timer because of TOPS-10
+  that KLH10 documentation warned about.
+* Implemented real-clock timer for KL10 emulator (time base
+  and interval counter).
+* Debugged DTE20 and KL10 emulation to fix some bugs.
+* Finally my KL10 emulator prints a dot! (TOPS-10 v7.03)
+* Fixed a bug in XBLT instruction that causes TOPS-10 v7.04 to
+  crash during system initialization.  Removed some codes from XBLT
+  emulation routine that check for section zero to execute MUUO
+  instruction.  According to KLH10 and KLX (KL10B microcode) source
+  codes, XBLT is allowed in section zero area.
+* Fixed a MUUO bug that cause illegal instruction messages with
+  exec PC 777777,,777777 when attempted to execute UUO instructions
+  because CNF_XADR is not set in kl10_Create.  Rewrote in
+  kl10_Create by adding CNF_XADR for KL10B device type.
+* Fixed a bug in DTE20 emulation that cause keyboard lock-up when
+  you type so fast.  Added dte20_SendPacket to resolve that problems.
+  If a packet is enqueued on already-filled queue, restarting is not
+  need. When enqueue a packet on empty queue, let's restart TO10
+  transfers.
+* Implemented PCS (Previous Context Section) on some KL10 instructions
+  because TOPS-10 complaint about illegal address messages when attempts
+  to load a exe file into memory (GET command).
+* Fixed a PXCT bug due to lack of PCS implementation by implement
+  its own effective address calculation.  After it was fixed, TOPS-10
+  finally no longer prints illegal address messages.
+* Rewrote XCT instruction to replace recusive calls for continously
+  loop until opcode is not XCT or PXCT.
+
+
+v0.8.7 - 7/24/2002 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Fixed a serious bug in main CPU routine to correct
+  ts10_ClkInterval countdown.  That bug caused the system to
+  being slowed to a crawal due to negative countdowns
+  from negative ts10_ClkInterval.
+* Implemented ITS I/O instructions (added to KS10 processor)
+  in ks10_io.c file.  Optional OPT_ITS was added.
+* Fixed a serious bug in KS10 UBA routines that cause DIRECT to complain
+  about 'No such files as' randomly and other strange happens like
+  to illegal instruction, illegal UUO, etc. because TOPS-10 uses
+  unaligned block transfers.
+* Fixed bugs in disassembler that misinterpreted I/O opcodes
+  as UUO instructions.
+* Cleaned up some data information for debug purposes in ks10_pag.c
+  file.
+* Changed all device function calls, etc. to follow latest
+  updates in TS10 emulator system.
+* Replaced the old KS10 UBA interface system with new KS10 UBA
+  routines that was designed for new TS10 core system.
+* Now able got a dot after initialized disk packs successfully!!
+
+v0.8.6 - 9/6/2001 by Timothy Stark <sword7@speakeasy.org>
+---------------------------------------------------------
+* Added switchable option to page fault reports.
+* Rewrote the console/KLINIK device routines by placing all variables
+  into struct variable so that I can port them to C++ easily.
+* Renamed all KS10 files to ks10_*.c file from cpu_ks*.c.
+* Fixed the problem that cause data loss or no response from CTY
+  device when telnet into it after boot or run system on TS10>
+  prompt.
+* Changes in UBA routines (uba.c) to handle IPL instead of BR level.
+* It was changed to 'Control-Backslash' from 'Ctrl-\' because some
+  compilers think that it is CR-suppression for next line.  Thank
+  to Megan for report that.
+* Made major changes through DTE20 interface for handling both
+  primary and secondary protocols to communicate with KL10.
+* Implemented initial primary protocol into DTE20 interface.
+* Finished the RH20 interface implementation and tested it.
+* Implemented the code to check if address is AC reference or not
+  by using global/local flag in memory.c file.
+* Fixed a few bugs that cause incompatible with extended addressing
+  feature on some instructions like CAI series, etc.
+* Implemented the initial symbol routines for file loader,
+  disassembler, etc.
+* Rewrote BLT instruction to handle cleanup routine for
+  page fail trap routine and extended in-section addressing.
+* Added global/local flag for extended effective address calculation
+  to allow instructions to discern that E address is local or global
+  for accessing AC reference or not.
+* Implemented XBLT instruction for KL10 processor.
+* Implemented XJRST (JRST 15,) instruction for extended addressing.
+* Fixed a bug in LoadExeFile cause the misalignment of loading into
+  the KL10 memory when I attempted to load SYSTEM.EXE into
+  the memory.  A number of file page must not be incremented if it is zero.
+* Fixed a bug in LoadExeFile lead the TS10 emulator into the crash when
+  it attempts to load data (SYSTEM.EXE) into above main memory area.
+* Fixed a bug in LoadExeFile cause the indefinite loop in its routine
+  because it contains extended addressing entry vector (1775).
+* First KL10 program was loaded and run successfully. Its filename
+  was BOOTM.EXE.
+* Implemented configurable function pointers to allow KS10 and KL10
+  processor emulations in the same code.
+* Implemented DTE20 device to initially handle console TTY
+  communications for KL10 processor.
+* Initial APR, PI, and PAG internal devices for KL10 series had been
+  implemented.
+* Major changes were made disassembly routines.  Now disassembler
+  properly display any Kx10 series I/O instructions instead of
+  only KS10 I/O instructions.
+* KL10A Processor intially was implemented.  Now KL10
+  programs can be executed!
+* Processor configuration feature were added so that users can
+  configure any processor instead of only KS10 processor.
+* S/N now can be set in configuration file.
+* All #endif's were modified because Red Hat Linux 7.1's
+  GNU C/C++ compiler that complaint about extra token
+  after #endif indefinitely times in just once compilation!
+* A bug in ADD instruction incorrectly set system flags
+  when both adders are positive and result is negative.
+  It cause DUMPER in TOPS-20 incorrectly report checksum
+  errors.  After a bug had been fixed, DUMPER savsets had
+  restored successfully.
+
+v0.8.5 - 5/1/2001 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* BUG704 patch had been removed since a change was made in
+  RH11 disk/tape controllers. TM02/TM03 tape formattor tells RH11
+  MASSBUS controller to force bus address increment regardless of
+  CS2.BAI set.
+* All instructions now passed random DSKDA tests execpt BLT
+  instruction because interrupt checking in emulated BLT instruction
+  was not implemented yet.
+* All floating routines were changed to able perform 64-bit fractions
+  in UFP structure to improve accuracy according to DSKDA tests.
+* Emulated MUL/IMUL routines were changed so that they were able
+  passed DSKAK and DSKDA tests.  A IMUL bug had been fixed according
+  to DSKDA tests.
+* Changed PC_* to FLG_* (system flags) to understand them more clearly.
+* Password for KLU line implemented for security reason.  That's why
+  TOPS-10 does not detect hangup or carrier loss and leave logged-in
+  account to next caller.
+* Delayed console interrupt was tuned for better optimization.
+  It was reduced to 100 cycles from 500 cycles.
+* A bug in front-end routines that cause alot of garbage output
+  had been fixed.  Garbage no longer displayed when you reconnected
+  one of CTY and KLINIK devices since either had been disconnected.
+* Now press ^\ twice to disconnect fron CTY or KLINIK devices.
+* KLINIK device completely was implemented.  It worked ok but...
+  Only problem is that TOPS-10 does not detect hangup or carrier loss.
+  Unlike TOPS-10, TOPS-20 do it.
+* Changed in front-end routines for better optimization. FE
+  routines now use direct-access pointers to KS10 main memory
+  for faster operations.
+
+v0.8.4 - 4/12/2001 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Effective address calculation was smpilified for improved
+  optimization. Its top peak MIPS now is 6.5 on 800 Mhz Pentium III.
+* DTE20 routines was partially implemented.  It is not finished yet
+  due to lack of documents at this time.
+* Kx10 I/O routines initially was implemented.
+* KL10 Implementation starts now.
+* -DCACHE option was implemented to turn cache off or on by
+  using compilation.
+* A bug in FADR instruction had been fixed.  The bug cause the BASIC
+  FOR-NEXT program to run erratically.  A bug produced +203600 instead
+  of +202400 from the sum of +201400 and +201400.
+* KS10 Unibus interface was rewritten for simpified functions through
+  I/O accesses and better optimization.
+* TCU150 routines implemented for KS10 Processor. (Check on dev
+  directory for more information.)
+* Cache routines implemented.  While paging system is on, memory
+  access's performance was little improved but DSKEB did not pass so
+  well due to timings.
+* XCT instruction now has previous context switch for memory
+  operand.  I assumed that it fixed a bug in TOPS-20's SYSTAT
+  command. Now SYSTAT normally display information with load
+  averages.
+
+v0.8.3 - 4/5/2001 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* All codes had been re-organized.
+* BLTBU and BLTUB instructions had been implemented but not debugged yet.
+* All floating instructions finally had been completed and debugged.
+  They passed all KLAD tests (DSKCA through DSKCE).
+* A bug in Priority Interrupt evaluation routines had been fixed. All 
+  problems on TOPS-20 v4.1 had been resolved for CTY device.  It originally
+  allow program requests regardless of enable settings.  Now they should not
+  be interrupted unless/until enable bit had been set.
+* A bug in DMOVN instruction had been fixed.  It incorrectly set a sign
+  bit in low word if high word is negative. It was not supposed to set.
+  It finally passed all KLAD tests (DSKCC).
+* A bug in Page Fail Trap routine that forced all system flags to zero.
+  It had been fixed by correctly load normal system flags from a PC word.
+* A bug in interrupt JSR (in PI handler routine) had been fixed because
+  it only cleared a user flag instead of clear all flags.  Now it clears
+  all flags during JSR instruction in PI handling.
+* A bug in MUUO instruction that unconditionally set Previous Context
+  User flag.  It had been fixed by correctly set PCU on a MUUO from
+  user mode.
+* Opcode 7XX decoding had been rewrotten for better optimization
+  by replacing switch statements with array of function pointers.
+* CTY routines had been changed to support socket routines.
+* A bug in MULB, IMULB, DIVB, IDIVB, ADDB, and SUBB instructions
+  had been fixed.  Thank to Bob for that.  Accumulators should not
+  be updated when a page fail trap occured.
+* A bug in MOVST instruction had been fixed.
+
+v0.8.2 - 3/18/2001 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Lars' patches had been applied into cpu.c for idle detection.
+* IDLE option had been added to enable idle or not during
+  compilation. It can be enabled in Makefile. It works
+  with unmodified TOPS-10 v7.03 monitor only.
+* Minor optimization had been made for speed improvement.
+  Now its peak speed is 5.21 MIPS on Pentium III 800 Mhz system.
+
+v0.8.1 - 3/15/2001 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Cache entry tables had been implemented (partially).
+* A bug in all byte instructions with byte pointer increment
+  had been fixed according to KLAD tests (DSKEA).
+* A bug in KL paging system (Indirect Section Pointer) had
+  had been fixed.  All KLAD tests (DSKEC) had been passed.
+* Local commands for PDP-10 had been added like disasm, deposit,
+  crash, etc.
+* All Lo's and Ld's had been changed to llo's and lld's due
+  for other platforms like NetBSD, etc.  
+* DDIV instruction had been fixed and finally passed KLAD tests.
+* BLT instruction do not need FPD flag according to KS10
+  microcode documentation.  It had been removed.
+* ASHC and ADJSP bug had been fixed. Bob Sunpik said that that
+  was a missing test for ASHC in KLAD tests.
+
+v0.8 - 2/21/2001 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Finished EXTEND instruction implementation.
+* Initial Public Release

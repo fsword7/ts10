@@ -1,0 +1,15 @@
+Device routines for disk, tape, ethernet, printer, serial, etc..
+
+This RH11 Controller routines are under developement and not finished yet.
+They should be compatible for all PDP-10, PDP-11, and VAX-11 emulators here.
+
+Ethernet, serial, printer, etc units are being implemented later.  I still
+am looking for Ethernet specifications (NI1010/NI2010, DE-series, etc..),
+MSCP/TMSCP specifications, Q22-Bus (for VAX), etc...
+
+Credits
+-------
+John Wilson, Pat, Daniel, etc.
+
+Tim Stark
+sword7@speakeasy.org

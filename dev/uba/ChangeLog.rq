@@ -1,0 +1,50 @@
+v0.8.2 - 10/17/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Added error packets (data transfer error and host bus error)
+  and modified data services to now handle data/host errors.
+* Added two MSCP commands (Format and Compare Host Data).
+
+v0.8.1a - 5/15/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Created new create routine and removed old create and setup
+  routines.
+* Added ResetIO function call to reset everything per bus
+  initialization request.
+* Found a root cause later but it already was fixed (see
+  previous log entries below).  A bug was in rq_Work function
+  that cause rq_Work to overwrote pktWork from pktQueue.  That's
+  why a packet got lost during heavy disk load.  The rq_Work
+  already was replaced by new rq_Queue.
+
+v0.8.1 - 4/19/2002 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Implemented the initial queue service to process MSCP
+  commands, flush response packets, etc. by using timer
+  service.  No doubts.  NetBSD/vax will be happy with that.
+* Blindly fixed a bug that cause a lost (null) packet during
+  data transfers without my knowledge!  That bug leads OpenVMS
+  to crash after a null/lost packet happened.  Root cause
+  still was unknown because a bug mysteriously disappeared.
+* Changed default timers for queue and xfer processes.
+
+v0.8a - 3/4/2002 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Fixed bugs that cause Ultrix to crash when it attempts
+  to lock BBR (bad-block replacement) work.  By fixing
+  a bug, force all unit flags have UF_RPL bit.
+
+v0.8 - 1/18/2002 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Fixed some bugs for compiling without debug facility.
+* Finished write access when attempted to install NetBSD/vax
+  system into MSCP disk drives.
+* Implemented command queues with delay timer because of
+  NetBSD/vax crash because of instanteous I/O access.
+  Interrupt triggered before 'tsleep' was called.  Thank
+  to Kevin Hardy for extensive debugging.
+
+v0.1 - 12/5/2001 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Initial public release
+* Ported from Bob's SIMH emulator.  Thank to Bob for
+  providing that because of lack of MSCP specifications.

@@ -1,0 +1,104 @@
+PDP-10 Emulator v0.8.6 Alpha
+
+Developement
+------------
+
+This PDP-6/PDP-10 emulator still is under developement and is not ready yet
+for production.  It almost is finished.  There is some problems in this
+emulator routines.
+
+Also other PDP6, KA10, KI10, and KL10 processors are being implemented
+later.
+
+Extended addressing support was implemented.  It might cause slightly
+degaradation of performance.  Optimization will be worked later.
+
+This TS10 emulator system now supports multi-format facility for both
+virtual disk and tape supports.
+
+KS10 SYSTEM
+-----------
+
+It now supports writing tapes when you perform backups on TOPS-10
+or TOPS-20.
+
+TOPS-10/TOPS-20 Operating System
+--------------------------------
+
+TOPS-10 v7.03/v7.04 is running fine under this current version of KS10
+Emulator.  For v7.04, make sure that remove DTELDR from SYSJOB.INI before
+reboot system when you finished to install TOPS-10 v7.04 software.  DTELDR
+is designed for KL10 only. It will not work on KS10 system and cause Galaxy
+daemons to crash.
+
+TOPS-20 v4.1 is running fine but a problem with LOGOUT command.  It cause
+the PAGLCK bug halt message when you attempted to logout.  That is known
+bug for TS10 emulator.
+
+To get them from Tim Shoppa's archives.  You need least 200 MB disk space to
+download everything from his web site.  His web/ftp address is:
+
+http://pdp-10.trailing-edge.com
+ftp://ftp.trailing-edge.com
+
+ITS Operating System
+--------------------
+
+ITS instructions had not implemented yet at this time.
+
+To get ITS package with source codes:
+
+ftp://ftp.its.os.org
+ftp://ftp.ai.mit.edu/pub/users/alan/its
+ftp://ftp.swiss.ai.mit.edu/pub/its
+
+KL10 SYSTEM
+-----------
+
+KL10 Processor still is under development at this time because I need
+to develop PDP-11 processor first for DTE20 interface.
+
+TOPS-10 v7.03 was successfully loaded and run but no dot prompt was
+printed yet due to some lack of DTE20 communications.
+
+Instructions to run the emulator
+--------------------------------
+
+To install TOPS-10 series, check your MIG manual.
+
+This T10 emulator now have socket interface so that you can telnet into
+the TS10 emulator by usint telnet command.
+
+$ telnet <hostname> <port>
+
+With TS10 default, its port is 5000.  You can change it in a ks10_fe.c file.
+
+To run the TS10 emulator system first: (If no TS10> prompt displayed,
+just press CR key to print it.)
+
+$ ./ts10 -f ks10.cfg
+  ------------------
+TS10>
+
+To enter the KS10 system on other xterm or terminal, type:
+
+$ telnet localhost 5000
+  ---------------------
+
+Then run system at TS10> prompt:
+
+TS10> boot rpa0
+      ---------
+
+Then do something on xterm that you are telneting into.  That is all.
+
+Now you can mount/dismount pack/tape files on TS10> prompt without
+affecting running PDP-10 system.  That finally is real timeshare.
+
+For more information about TS10 commands, just press '?' to
+display listing of commands with usage.
+
+Thank you!
+
+Tim Stark
+sword7@speakeasy.org

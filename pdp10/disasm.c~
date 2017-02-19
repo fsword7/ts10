@@ -1,0 +1,122 @@
+// disasm.c - PDP-6/PDP-10 Disassembler
+//
+// Written by
+//  Timothy Stark <sword7@speakeasy.org>
+//
+// This file is part of the TS-10 Emulator.
+// See README for copyright notice.
+//
+//  This program is free software; you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation; either version 2 of the License, or
+//  (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+#ifdef DEBUG
+
+#include "pdp10/defs.h"
+#include "pdp10/proto.h"
+
+extern INSTRUCTION *pdp10_Opcode[];
+extern INSTRUCTION *pdp10_OpcodeEXT[];
+extern INSTRUCTION *pdp10_OpcodeIO[];
+extern INSTRUCTION *pdp10_OpcodeDEV[];
+extern INSTRUCTION *pdp10_OpcodeFUNC[];
+
+void p10_Disassemble(int30 Addr, int36 Inst, int mode)
+{
+	// Fields of Instruction Code
+	int18 opDevice;   // (I/O)   Device Code       (DEV)
+	int18 opFunction; // (I/O)   Function Code     (FUNC)
+	int18 opCode;     // (Basic) Opcode field      (OP)
+	int18 opAC;       // (Basic) Accumulator       (AC)
+	int18 opIndirect; // (Both)  Indirect          (I)
+	int18 opIndex;    // (Both)  Index Register    (X)
+	int18 opAddr;     // (Both)  Address           (Y)
+
+	char  *Name;
+	char  *Symbol = NULL;
+	char  *locSymbol;// Symbol of location
+	char  *acSymbol; // Symbol of accumlator
+	char  *xrSymbol; // Symbol of index accumlator
+	char  *eaSymbol; // Symbol of effective address
+
+	opCode     = INST_GETOP(Inst);
+	opDevice   = INST_GETDEV(Inst);
+	opFunction = INST_GETFUNC(Inst);
+	opIndirect = INST_GETI(Inst);
+	opIndex    = INST_GETX(Inst);
+	opAddr     = INST_GETY(Inst);
+	opAC       = INST_GETAC(Inst);
+
+	if (mode & OP_EXT) {
+		Name = pdp10_OpcodeEXT[opCode]->Name;
+	} else {
+		if (opCode >= 0700) {
+			// I/O Instruction Format
+			if (pdp10_Opcode[opCode] != NULL) {
+				Name = pdp10_Opcode[opCode]->Name;
+			} else {
+				if (pdp10_OpcodeIO[(Inst >> 23) & 01777]) {
+					Name = pdp10_OpcodeIO[(Inst >> 23) & 01777]->Name;
+					opAC = 0;
+				} else {
+					Name = pdp10_OpcodeFUNC[opFunction]->Name;
+					if (pdp10_OpcodeDEV[opDevice])
+						Symbol = pdp10_OpcodeDEV[opDevice]->Name;
+//					if (p10_kxDevices[opDevice])
+//						Symbol = p10_kxDevices[opDevice]->Name;
+					opAC = opDevice << 2;
+				}
+			}
+		} else {
+			// Basic Instruction Format
+			if (pdp10_Opcode[opCode]->Flags & OP_AC) {
+				if (pdp10_Opcode[opCode]->AC[opAC]) {
+					Name = pdp10_Opcode[opCode]->AC[opAC]->Name;
+					opAC = 0;
+				} else
+					Name = pdp10_Opcode[opCode]->Name;
+			} else
+				Name = pdp10_Opcode[opCode]->Name;
+		}
+	}
+
+	if (locSymbol = p10_FindSymbol(Addr))
+		dbg_Printf("CPU: Start at %s\n", locSymbol);
+
+	dbg_Printf("CPU: %06o %06o,,%06o %-6s ",
+		Addr, LH18(Inst), RH18(Inst), Name);
+
+	if (acSymbol = p10_FindSymbol(opAC))
+		dbg_Printf("%s,", acSymbol);
+	else if (opAC)
+		dbg_Printf("%o,", opAC);
+	else if (Symbol)
+		dbg_Printf("%s,", Symbol);
+
+	if (opIndirect)
+		dbg_Printf("@");
+
+	if (eaSymbol = p10_FindSymbol(opAddr))
+		dbg_Printf("%s", eaSymbol);
+	else if (opAddr)
+		dbg_Printf("%o", opAddr);
+	
+	if (xrSymbol = p10_FindSymbol(opIndex))
+		dbg_Printf("(%s)", xrSymbol);
+	else if (opIndex)
+		dbg_Printf("(%o)", opIndex);
+
+	dbg_Printf("\n");
+}
+
+#endif /* DEBUG */

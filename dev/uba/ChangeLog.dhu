@@ -1,0 +1,27 @@
+v0.6a (6/3/02) by Timothy Stark <sword7@speakeasy.org>
+------------------------------------------------------
+* Fixed a bug in dhu_WriteIO that cause OpenVMS think that DHV11
+  has 16 ports instead of 8 ports.  Note: OpenVMS only accepts 4,
+  8, or 16 ports.
+
+v0.6 (5/30/02) by Timothy Stark <sword7@speakeasy.org>
+------------------------------------------------------
+* Removed all obsolete function calls.
+* Fixed a bug in dhu_Output that cause VMS terminal driver
+  can't send characters on any TTY line execpt TTY line 0. 
+* Added ResetIO function to reset everything per bus
+  initialization request.
+* Updated/expanded CSR and ResetDevice (ResetIO) routine by added
+  CancelInterrupt function calls, etc.
+* Renamed all functions from 'dh_' to 'dhu_'.
+* Implemented delay timers for transmit.
+* Implemented transmit buffer for CSR register.  All
+  problems finally had been resolved with device timeout
+  errors.  I tested 8 login sessions to type some files
+  in the same time and everything is fine.
+* Implemented and tested DMA for transmit.
+
+v0.1 (5/2/02) by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------
+* Implemented initial DHV11/DHU11/DHQ11 terminal emulation
+  from scratch.

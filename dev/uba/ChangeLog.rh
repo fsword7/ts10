@@ -1,0 +1,10 @@
+v0.8 - 7/24/2002 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Fixed a serious bug in rh_WriteIO and rh_ReadIO routines
+  for RHCS1 access that cause entire TS10 system to crash into
+  the segmentation fault with uninitialized (non-existant) drive unit.
+* Fixed a bug in rh_ResetDevice routine that failed to clear (reset)
+  all existing MASSBUS drives when set DCLR bit in RHCS2.
+* Created new RH11 emulation from scratch for current MBA routines
+  and KS10 system.
+* Initial public release.

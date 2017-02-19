@@ -1,0 +1,284 @@
+v0.8.5 - 12/4/2002 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Updated new interrupt handling for KA630 and KA655
+  Qbus interface by using new UQ_IPL data structure.
+  It now have up to 32 vectors each interrupt level
+  (BRx) and support dynamic priority order.
+* Made some corrections that make Intel C/C++ compilers happy
+  by adding some protoype declarations, correcting mismatched
+  conversion, etc.
+* Moved vax_Dump function from system.c to disasm.c.
+* Updated instruction table that make Intel C/C++ compiler
+  happy.  Added new Flags field to table and put ISTR_NORMAL
+  on all instructions. Replaced EMULATE (Execute field) for
+  new ISTR_EMULATE (Flags field) on all unimplemented packed
+  and string instructions.
+* Implemented new DEF_NAME and DEF_INST to replace all old
+  INSDEF, INSNAM, and INSCALL macro functions in defs.h file
+  and finished instruction table with new macros in inst.c file.
+* Renamed all emulated instruction functions with new macro
+  definitons to support future multithreading (pthreads).
+* Replaced all old BuildCPU functions in KA630, KA650, and KA780
+  system files for new vax_BuildCPU function with configuration
+  settings in cpu_main.c file.
+
+v0.8.4 - 9/25/02 by Timothy Stark <sword7@speakeasy.org>
+--------------------------------------------------------
+* Cleaned up and moved some codes in QBA interface for KA630
+  and KA65x because QBA routines seems so reliable for many months.
+* Added dynamic interrupt control to QBA interface so that
+  VAX/PDP11/KS10 devices can be merged together as sharing
+  device emulation routines.
+
+Version 0.8.3a - Timothy Stark - 7/17/2002
+------------------------------------------
+* Corrected HALT action routine by adding SP switch, etc.
+
+Version 0.8.3 - Timothy Stark - 5/16/2002
+-----------------------------------------
+* Changed all create routines for new create command.
+* Implmented autoset TODR routine during boot for KA650 series
+  processor.
+* Fixed some bugs in SetMap function call in KA630 and KA650's
+  Qbus interface for static CSR and vector address when I implemented
+  new DHV11 terminal interface.
+* Cleaned up some in Info routines in both Qbus interfaces.
+* Fixed a bug that failed to clear trap requests during page fault
+  traps.  (Found by Bob Supnik)
+* Initially Re-implemented the KA780 processor to emulate
+  VAX-11/780 series for older operating systems, etc.
+* Added ResetAll to reset all devices for bus initialization.
+  After it was done, it shortened shutdown time so much.
+* Added PR_IORESET (privileged register) to KA650/KA655 module
+  for cq_ResetAll function call.  Updated KA630 module for
+  qba_ResetAll function call.
+* Moved vax11_brDisp to VAX_CPU structure for future SMP proceessing.
+  Updated all branch instructions to use vax->brDisp instead of
+  vax11_brDisp.
+* Removed old status bitfield structure and changed privileged
+  register (IPL) routine on all processor modules.  Its performance
+  slightly improves.
+
+Version 0.8.2 - Timothy Stark - 4/19/2002
+-----------------------------------------
+* Re-fixed a bug in CASE instructions because of signed compare for
+  condition codes.  Thank to Bob Supnik for points out.  That bug
+  did not affect OpenVMS system running. (Found by Bob Supnik)
+* Fixed a bug in EDIV that cause integer overflow if either divsor
+  and dividend have different signs and quotient is zero.
+* Fixed a bug in all field instructions cause DEC C compiler to fail
+  with /debug option and others.  After changed from uint32 to int32
+  in the position operand, all problems had been resolved.  (Found
+  by Bob Supnik)
+* Fixed a bug in RQDX3 emulation that cause OpenVMS to crash after
+  a null/lost packet happened during heavy disk load.  For more
+  information, check the ChangesLog.rq file in the dev directory.
+
+Version 0.8.1c - Timothy Stark - 4/15/2002
+------------------------------------------
+* Simpflied interrupt/exception routines for performance and renamed
+  from vax_Exception to vax_DoIntexc for better description.
+* Implemented more complete detials about reserved operand,
+  reserved address mode, and privileged instruction faults to find
+  bugs much faster.
+* Fixed a bug in INSV instruction that uses 32-bit instead of 8-bit
+  size operand to cause the reserved operand fault during MONITOR
+  utility program in OpenVMS system. After it was fixed, MONITOR now
+  displayed all activities properly (MONITOR> monitor all).
+* Fixed a bug in CASE instructions that cause many problems on
+  varying softwares like compilers, TPU/LSE editor, etc.
+
+Version 0.8.1b - Timothy Stark - 4/14/2002
+------------------------------------------
+* Finally, fixed a damn nasty bug in interrupt/exception routines
+  that cause PROBEW failed during AST delivery! OpenVMS now get
+  so much further!
+* Fixed another bug in PROBE instruction that cause logical table name
+  creation failed during STARTUP.COM.  Thank to Kevin Hardy for
+  extensively debugging.  (Found by Kevin Hardy)
+* Removed a temp patch for -DASTBUG option from PROBE instructions
+  because PROBEW instruction and interrupts now worked properly.
+* Fixed a bug in STOP command that cause TS10 system to crash with
+  segmentation fault error. (Found by Kevin Hardy)
+
+Version 0.8.1a - Timothy Stark - 3/20/2002
+------------------------------------------
+* Applied patches from Dennis to compile correctly on Alpha
+  systems.
+
+Version 0.8.1 - Timothy Stark - 2/18/2002
+-----------------------------------------
+* Fixed a very serious bug in PROBER/PROBEW instructions that cause
+  OpenVMS system to crash during RQDX3 initialization.  After
+  it was fixed, OpenVMS finally displayed time/date dialog prompt.
+* Good News! Booted OpenVMS system through the banner, time/date
+  dialog, and the device autoconfiguration information into the
+  userland (a dollar) and successfully restored disk system by
+  using backup command.
+* Fixed a few bugs in FFC and EXTZV instructions that cause this
+  emulation system to crash into segmentation fault.  After they were
+  fixed, emulation system no longer crashes.
+* Fixed a bug in operand decoder that misinterpret an immediate which
+  is variable field address in EXTZV, etc.  That cause the page
+  fault trap or segmentation fault.
+* Fixed a bug in BUGW/BUGL instruction that cause repeating page fault
+  traps.  Fixed the operand decoder to do not interpret pesudo immediates
+  for BUGW/BUGL instructions (designed for disassembler/assembler
+  facilty).
+* Implemented a temp patch in PROBEW instruction to allow OpenVMS
+  to get much further.  However, a root cause still remains
+  undetermined.  Use -DASTBUG option to disable a legal check in the
+  vax_Probe function.  This will be removed when all problems
+  are resolved.
+* Implemented a KA650/KA655 processor module to emulate MicroVAX
+  3800/3900 series system.
+
+Version 0.8a - Timothy Stark - 1/28/2002
+----------------------------------------
+* Made changes in memory access to access data aligned rather than
+  unaligned access to prevent unforeseen hardware-related problems.
+  Also removed all unnecessary codes for unaligned accesses in KA630/KA65x
+  routines.  Tested them with HCORE and all tests passed.
+* Found a serious bug in console memory access that cause the incorrect
+  result of operand contents for disassembly.
+* Changed all memory accesses to unsigned data from signed data.
+* Fixed another two serious bugs that cause database building to crash
+  and cause the /bin/csh to fail to execute background processes during
+  login time. For more information, read them below.
+* Found and fixed a serious bug in SKPC instruction that failed to
+  compare unsigned character with signed character and changed to unsigned
+  character by fixing a bug.
+* Found and fixed a serious bug in RET instruction that checked wrong
+  stack pointer for write check.  During login time, /bin/csh failed
+  to execute 'tset' in background in 'eval' statement and created
+  clones itself instead.  It resulted in the page fault trap.  After
+  page fault was processed, RET instruction restored wrong contents
+  (bypassed recent caller!)  After a bug was fixed, /bin/csh now executed
+  'tset' properly.
+
+Version 0.8 - Timothy Stark - 1/18/2002
+---------------------------------------
+* Good News!!! Installed NetBSD/vax and brought system to up sucessfully!!
+* Implemented all floating instructions execpt H_floating.  Debugged
+  F_floating instructions by using KA630 firmware (countdown #4).
+  Debugged rest of floating instructions by using HCORE tests.
+* Implemented initial KA650/KA655 Processor but they are still under
+  development at this time.
+* Implemented and replaced new individual instruction table per
+  processor instead of per system.
+* Made changes in condition code updates and instruction decoder
+  for using new instruction table for better opimitization.  With
+  1.9 GHz P4 system, it now was peak 6.5 MIPS - slightly faster than
+  VAX 8650.
+* Fixed serious bug that cause 'sleep' to crash. Found a bug in
+  main routine that failed to clear all recovery queues before
+  a page fault trap triggered.  "CLRL -(SP)" is at loc 1FFE.
+  At loc 2000, a page fault trap triggered during instruction
+  fetch and SP was restored back.  Later, function (atof) attempted to
+  return results but segmentation fault triggered.
+* Fixed another serious bug that cause 'route' to crash.  Found a bug
+  in memory access that resulted corruption if one of aligned pair
+  is negative and address is unaligned.  Fixed a bug by switching to
+  unsigned shifts.  A bug cause CASEL instruction jumped into wrong
+  location.
+* Fixed a few minor bugs when re-tested all instructions with HCORE
+  tests.
+
+Version 0.7.6 - Timothy Stark - 12/14/2001
+------------------------------------------
+* Added boot device function to able boot specific processor.
+* Placed all emulated stack instructions together into
+  a cpu_stack.c file.
+* Implemented the write/read check for multi-stack instructions
+  for page fault routines before push or pop registers.
+* Fixed the translation buffer table (TBIA register) that
+  failed to clear all system TLB cache.  That cause NetBSD 1.5.2
+  to crash during page fault trap.
+* Fixed the prefetch instruction buffer that was another broken.
+  That cause NetBSD/vax 1.5.2 crashes after printed "root file
+  system type: ffs".  Simplfied the fetch access from memory.
+* Rewrote ka630_WriteBlock and ka630_ReadBlock to improve
+  data transfers with new RQDX3 MSCP disk controller simulation.
+  They were broken because some data transfers are not aligned
+  to a page.
+* Fixed a few broken field instructions that cause NetBSD/vax
+  1.5.2 to crashes.
+* Fixed Q22 for MicroVAX II that cause no interrupts that came
+  from RQDX3 disk controller.
+
+Version 0.7.5 - Timothy Stark - 10/25/2001
+------------------------------------------
+* Fixed CASEx instructions to treat selector and base as signed
+  integer.  OpenVMS system crashed with lengthy BUG CHECK message.
+  MOVTC was executed and interrupted into the emulation exception.
+  CASEB miscalucated selector and base as unsigned and went derailed
+  into BUG CHECK routines.
+* Fixed a bug in interrupt evaluation routine.  REI cause the
+  fault if new IPL is higher than old IPL.  Clock interrupts should
+  not be performed if IPL 31 (hex 1F) is in effect.  A fault cause
+  OpenVMS to go out of control into crash.
+* Fixed a few bugs in prefetch buffer instruction routines because
+  SYSBOOT loaded images from disk backward and OpenVMS crashed by
+  crossing the page with failing to check virtual address for next page.
+* Successfully loaded and run OpenVMS v7.2 after implemented write/read
+  access in MSCP device emulator.
+
+Version 0.7 - Timothy Stark - 10/25/2001
+----------------------------------------
+* Now can implement I/O Access routines as of today.
+* Primary bootstrap was successfully completed!
+* Finished the initial Q22-bus interface routines.
+* Implemented the "this memory location is bad" parity check
+  for firmware to pass tests during test #3.
+* Implemented the interval timer (ICCS) and console TTY device that
+  MicroVAX II VMB rom requires them to pass test #3.
+* Implemented the prefetch instruction buffer access.  It resulted
+  a big boost in execution.  It almost instantly completed HCORE tests.
+  All passed HCORE tests well.  HALT instruction in PC 18AD0 means that all
+  instructions passed tests.  MicroVAX II VMB rom requires that prefetch
+  instruction buffer to pass test #4 or crash system.
+* Finished initial KA630 module and prepared for tests to run to see if
+  boot works sucessfully.
+* Implemented the dynamic system mapping to support multi-module system
+  like KA630, KA650, and KA780 by using setting in configuration file.
+* Added KA650 module to support CVAX series.
+* Implemented all instructions execpt floating for CVAX series.
+* Finished the bare VAX emulator and all instructions execpt floating
+  passed all HCORE tests that are designed for CVAX series (KA650).
+* Implemented memory management for virtual memory access.
+* Implemented interrupt/exception/trap routines.
+* Replaced old byte-oriented memory access routines for that new routines.
+* Implemented Aligned and unaligned memory access routines.  My new
+  techique allows GCC compiler to just produce one simple instruction
+  for both aligned and unaligned memory access in any size (byte,
+  word, and longword).
+
+Version 0.2b - Timothy Stark - 7/31/2001
+----------------------------------------
+* Implemented the initial PTE macro definitions
+* Implemented the initial Massbus adapter.
+* Implemented the initial Nexus slot routines for older model series like
+  11/730, 11/750, 11/780, 11/785, 8600, and 8650.
+
+Version 0.2a - Timothy Stark - 3/13/2001
+----------------------------------------
+* This VAX module had been merged with TS10 emulator
+
+Version 0.2 - Timothy Stark - 3/9/2001
+---------------------------------------
+* Some VAX instructions had been fixed with running HCORE tests.
+* Several VAX instructions had been added more.
+* Console terminal devices for VAX-11/780 had been added.
+* First VMS message finally was printed by VMB.EXE. :-)
+
+Version 0.1 - Timothy Stark - 3/7/2001
+--------------------------------------
+* Several VAX instructions had been implemented.  There now are 111
+  instructions.
+* Execution routine had added.
+* KA780 module had been added.
+
+Version 0.0 - Timothy Stark - 2/16/2001
+---------------------------------------
+* Initial VAX emulator had been created.
+* Released to public.

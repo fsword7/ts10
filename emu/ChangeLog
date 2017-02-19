@@ -1,0 +1,144 @@
+v0.8.9d - 1/5/2003 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Made some corrections that make Intel C/C++ compiler so happy
+  by adding some protoype declarations, etc.
+* Added byteswap.h and endian.h in defs.h file for both big-endian
+  and little-endian machines for Linux platforms.
+* Implemented the own inline assembly bswap routines due to a
+  bug in GNU's byteswap.h file that does not work with Intel C/C++
+  compilers.  New assembly bswap routines are much faster than
+  generic bswap routines by eliminating several instructions.
+* Removed unused 'SwapLong' and 'SwapWord' from misc.c for new
+  assembly bswap support routines.
+* Changed ts10_Select's name to ts10_System for better common sense.
+
+v0.8.9c - 8/19/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Made changes in SocketHandler so that socket errors will not
+  printed on panel control window, but will be printed in debug
+  log file.
+* Added DBG_SOCKERR to debug facility for provides socket error
+  messages in debug log file.
+
+v0.8.9b - 8/12/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Implemented the real-clock timer queues that provide multi timer
+  entries instead of only timer routine. (timer.c)
+* Fixed a bug in SocketHandler that cause DELQA emulation to
+  stall during heavy traffic from/to Internet/Intranet.
+  (found by Peter Svensson)
+
+v0.8.9a - 7/25/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Fixed a serious bug in timer routines (in timer.c) that cause
+  system to being slowed down to a crawal because negative
+  countdown values was calculated for timer calibration.  After
+  it was fixed, if ts10_ClkInterval contains negative value,
+  it have being reset to zero before new countdown values
+  were calculated.
+* Fixed a bug in vtape.c (tps_Read and tps_Skip) routine that cause
+  BACKUP or DIR ignores EOT encounters and continue.  I confirmed that
+  according to monitor sources (TM2KON.MAC) after I studied it and
+  other KS10 emulators.  After it had been fixed, zero block size
+  always is tape mark and BACKUP finally stopped after two tape
+  mark encounters. EOT encounters only applies to attempting to
+  write records.
+* Added warning report in tps_Read to warn record is too large to fit
+  buffer with requested number of bytes.  I discovered that some old
+  TPC files from Tim's archives have a dino-sized or behemoth bug (a fake
+  64K bytes record after two last tape marks) at its end.  No one noticed
+  that for long time until this emulator revealed that.  Good news.
+  New TAP files from Tim's archives do not have this bug.
+
+v0.8.9 - 6/13/2002 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Implemented new virtual disk and tape routines to replace
+  old obsolete disk and tape routines.  New support routines
+  now provides multi-format.  Obsolete routines will be removed
+  later.
+
+v0.8.8a - 5/20/2002 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Reversed the sequence of binding socket and setting flags included
+  SO_REUSEADDR option in sock_Open.c and this annoying behaviour
+  finally disappeared!  We now do not have wait for a while before
+  we can restart the TS10 emulator.  (found by Dennis Henriksen)
+
+v0.8.8 - 5/13/2002 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* Added new configure command for configuring individual
+  drives, terminals, etc. on the same mapping device.
+* Removed obsolete create and setup routines and moved
+  new create and configure routines to top of function
+  calls.  Also, updated all DEVINFO settings through TS10
+  emulator system.
+
+v0.8.7 - 3/26/2002 - by Timothy Stark <sword7@speakeasy.org>
+------------------------------------------------------------
+* Added new create2 command for multi-aliases naming support
+  and simpfly Create calls.  Old create command now is obslete.
+* Added Create2 function call in Device structure.
+* Fixed bugs in commands.c that crashes into segmentation
+  fault when device information does not have a listing of
+  commands (null pointer).
+
+v0.8.6c - 3/20/2002 - by Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------------
+* Changed all SOCK_* to SCK_* names in socket.h to avoid
+  conflict with other definitions in system include files.
+  That patches that I received from Dennis had been applied.
+
+v0.8.6b - 3/18/2002 - by Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------------
+* Fixed a bug in debug.c that crashes into segmentation fault.
+  Thank Dennis for bug report.
+
+v0.8.6a - 1/18/2002 - by Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------------
+* Fixed some debug-related bugs when attempted to compile without
+  debug facility for optimization.
+* Implmented file I/O for socket routines to support both file and
+  terminal I/O with any commands.
+* Implemented initial breakpoint systems for debug facility but
+  not finished yet.
+* Made changes in command handler so that name of commands can
+  be shortened now.
+
+v0.8.6 - 12/14/2001 - by Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------------
+* Implemented more device functions - debug and boot.
+
+v0.8.5 - 10/30/2001 - by Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------------
+* Fixed a bug in STDIN socket that cause TS10 exit on Solaris.
+* Implemented 'show device' to list devices that system has.
+* Changed system command tables by adding usage information.
+* Renamed some functions by removing ts10_'s, util_'s, etc.
+* Implemented the System of Systems routines.
+* Replaced the old dynamic device mapping for new ones.
+
+v0.8.0 - 9/6/2001 - by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------------
+* Fixed a bug in the simulation timer system that cause 10,000
+  count down instead of its desired count down in ts10_SetTimer
+  routine.
+* Replaced the old timer system for the new simulation and real
+  timer routines to provide better services for delayed I/O accesses,
+  ticks, etc.  For real timer system, its only limitation is least 10
+  milliseconds due to Linux operating system.
+* Implemented initial help system with a '?' key.
+* Implemented the repetitive command handling for 'dump' and
+  'disasm' command without any options to advance by just press
+  'CR' key.
+* Extended socket/SIGIO handling to keyboard and screen for real
+  timeshare.  Operators now are able to mount pack/tape files
+  on console prompt without affecting running emulated
+  processor(s).
+
+v0.7.2 - 3/20/2001 - by Timothy Stark <sword7@speakeasy.org>
+------------------------------------------------------------
+* A bug in console_Prompt had been fixed.  When you just press
+  return, TS10 emulator crashed with segmentation violation.
+* Patches had been applied to tape.c for big-endian machines.
+* Socket routines initially had been implemented for CTY,
+  DZ11, and others.

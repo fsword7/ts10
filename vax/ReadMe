@@ -1,0 +1,297 @@
+VAX emulator v0.8.2 (Alpha)
+
+Note: this ts10 emulator works so well on x86 and Alpha machines.
+
+OpenVMS v7.3
+------------
+
+OpenVMS 7.3 is running fine.
+
+To obtain a copy of OpenVMS, order a Hobbyist CD v3.0 from Montgar
+for $30 US dollars. For more information, check at
+http://www.montgar.com/hobbyist.  You have to be an Encompass
+(DECUS) member to order that.
+
+For Hobbyist CD v1.0 and v2.0, you have ask someone that have a older
+copy of Hobbyist CD to borrow.  Earliest version of OpenVMS is working
+so well - VAX/VMS v5.4.  Earlier than VMS v5.4 is not tested yet.
+
+About Hobbyist OpenVMS CD v1.0, there are many versions of VMS from v5.5 to
+v6.2.
+
+About Hobbyist OpenVMS CD v2.0, there are a copy of OpenVMS v7.2 and
+selected products.  Because there is a bug in TCP/IP v5.0, any telnet
+session will not work with XTERM id.  For more information about solution,
+see the Ethernet section below.
+
+About Hobbyist OpenVMS CD v3.0, there are a copy of OpenVMS v7.3 and
+selected products. everything is running fine.
+
+There is known bug in VAX emulator.  When root disk was not unmounted
+properly (quit emulator without shutdown procedure), attempts to boot the
+OpenVMS operating system, it takes forever.  On DCL prompt, attempt to
+mount the root disk, it takes forever.  Only way to restore root disk from
+backup.  Save your root disk files each time before attempt to boot
+system.
+
+For more discussions, check comp.os.vms newsgroup.
+
+NetBSD/vax 1.5.2
+----------------
+
+NetBSD/vax 1.5.2 is running fine.
+
+To obtain a copy of NetBSD/vax 1.5.2, check http://www.netbsd.org
+for more information.  You need least 400 MB disk space to perform
+full installation.  Use RZ24 disk drive or larger.
+
+DEC Ultrix 4.x
+--------------
+
+Ultrix 4.x is running fine.
+
+
+DEQNA/DELQA Ethernet Controller
+-------------------------------
+
+For more information about TAP/TUN tunnel driver interface, check
+http://vtun.sourceforge.net.
+
+If tun module is not loaded on Red Hat Linux system, log into system as
+root and enter that lines on your shell prompt:
+
+  mkdir /dev/net
+  mknod /dev/net/tun c 10 200
+  modprobe tun
+
+To hook up this VAX emulator to LAN network area.
+
+Run TS10 emulator to open TAP/TUN connection first.  Make sure
+to create any ethernet controller in configuration file:
+DEQNA or DELQA.  For OpenVMS v7.x, use DELQA because DEQNA is not
+supported on current OpenVMS versions.
+
+  ./ts10 -f ka655.cfg
+
+Then set up interface configurations. Login into system as root.
+Following instructions here.
+
+  ifconfig tap0 192.168.0.1 pointopoint 192.168.0.2 up
+  route add 192.168.0.2 gw 192.168.0.1  (Optional)
+
+  Note: TS10 Emulator        192.168.0.2
+        TAP/TUN Connection   192.168.0.1
+
+if you want to monitor TUN/TAP connection as traffic, login into
+system as root and use tcpdump or ethereal.
+
+  tcpdump -i tap0
+
+There is a bug in TCPIP v5.0 that comes with OpenVMS 7.2 Hobbyist CD
+distribution.  Upgrade it to v5.1 or later.  For working-around
+solution, set TERM to vt100 or vt102 that OpenVMS 7.2 knows for
+telnet initialization.  Other TCP/IP software like TCPWARE or MultiNet,
+they worked fine.  Or get the OpenVMS 7.3 Hobbyist CD (v3.0).
+
+  export TERM=vt100
+  telnet 192.168.0.2
+
+DELQA is a high-speed broadband device.  On 1.9 Ghz P4 system, FTP speed
+was estimated 650KB/sec to 800KB/sec.  Downloading a 30 MB file takes
+estimated 45 seconds to complete.
+
+Warning: On telnet sessions, output are very extremely fast.  Try
+'TYPE SYS$MANAGER:TCPIP$CONFIG.COM' and you will find out that
+scrolling is too damn fast!
+
+Recently someone reported on comp.os.vms newsgroup that DECwindows
+successfully worked so well on TS10/VAX emulator.
+
+Jnet VAX v3.x (Historic BITNET network)
+---------------------------------------
+
+Jnet VAX 3.x is working so well on the TS10/VAX emulator running
+OpenVMS v7.2.  Jnet provides RSCS network with other systems like IBM
+mainframe.  For make a link to other system outside, install Jnet and
+TCPNJE software into OpenVMS system and following instructions below.
+
+Put a line into JAN_SYS:JANLINKS.JCP or run JANCONFIG.COM
+
+   DEFINE <linkname> /LINK /DAEMON=TCPNJE /LINE=UCX
+
+Create <linkname>.PAR in JAN_SYS:
+
+   TCP.RMTNODE = <host address>
+   TCP.RMTPORT = 175
+   TCP.LCLPORT = 175
+   OPRMSG = YES
+   BUFF   = 4096
+
+Then run JCP (Jnet Control Program)
+
+   $ SET DEF JAN_SYS:
+   $ RUN JCP
+   JCP> START <linkname>
+   JCP> EXIT
+   $
+
+Funet-NJE RSCS emulator
+-----------------------
+
+That is developed for Unix systems.  However, this version is not compatible
+with current Linux platforms.  Good news!  I successfully ported that
+to Linux platform.  I successfully send messages and files to and from the
+VAX emulator via NJE connection.   However, there is a bug in Jnet 3.x 
+cause that BCB sequence error after Funet-NJE successfully connected to
+Jnet 3.x.  However, it only worked fine when Jnet connected to Funet-NJE
+(passive connection).  That requires Jnet TCPNJE driver in order to work
+properly.  Devices for BSC/SNA connections are not implemented yet.
+
+Funet-NJE RSCS emulator with source code is available at
+ftp://ftp.funet.fi/pub/unix/networking/bitnet.
+
+
+PowerTerm by Ericom, Inc.
+-------------------------
+
+For best terminal emulation for OpenVMS operating system, I strongly
+recommend that PowerTerm InterConnect Linux Edition software by Ericom,
+Inc.  For more information about PowerTerm products, check
+http://www.ericom.com.
+
+I myself tried PowerTerm Linux edition with this emulator and was 
+impressed by more accurate and faster terminal emulation than 'xterm'
+program.  If you want freeware version, try 'xterm', not Gnome, KDE
+terminal, etc. because many terminal emulation software execpt xterm
+is not compatible with some OpenVMS commands (LSE, help, etc.)
+
+
+DHV11/DHQ11/DHU11 Terminal Controller
+-------------------------------------
+
+TCP port for DHV11 emulation is 5010.  It accepts up to 8 TTY lines
+at this time.  For downloads, etc, set /DMA option on SET TERMINAL command
+on DCL prompt (OpenVMS):
+
+   set terminal txa0: /dma
+
+
+Specifications Still Needed to Complete
+---------------------------------------
+
+Listing of Specs/Material Still Needed to Complete:
+
+Firmware images for MicroVAX 3100 series
+MicroVAX 3100 Tech Manuals
+DESQA Ethernet Manual
+VAX Acrhitecture Handbook (2nd Edition)
+Vector Instructions
+Wide varieties of perhps
+Older VMS operating system (v1/v2/v3, etc.)
+
+Listing of specifications and materials that I have here so that I am
+able complete some VAX emulator at this time:
+
+VAX-11/780 Hardware manuals includes Microcode specs.
+VMB code for CVAX series (KA650/KA655)
+VMB code for MicroVAX II series
+MSCP/TMSCP drives/controllers
+DEUNA/DELUA Ethernet Manuals
+DEQNA/DELQA Ethernet Manuals
+DELQA Turbo Ethernet Manual (Programming Chapter only)
+RH11 controller with all disk and tape drives
+MASSBUS controller with all disk and tape drives (VAX-11/780)
+DZ11 communications
+VAX Acrhitecture Handbook (1st Edition)
+VAX/VMS Internals and Data Structures Handbook (v5.2)
+ODS1/ODS2 filesystem specs
+RX02 floppy disk specs
+OpenVMS v7.2 operating system CD (Hobbyist Edition)
+Hobbyist CD v1 (includes v5.4 to v6.1)
+NetBSD for VAX
+MicroVAX II specs for local I/O registers and Q22-Bus interface.
+VCB01/VCB02 - Graphics specs for X/DEC-Windows.
+KA655 Technical manual
+DHV11/DHU11/DHQ11 programming specs
+
+I am looking for more device specifications to complete the VAX emulators
+with wide devices includes tape, ethernet, etc.  Only I have knowledge
+of RH11 controller and its MASSBUS drives specifications at this time 
+(for PDP-10 emulator).  Also, I need Q-bus specification for MicroVAX II.
+
+When you develop your desired device handling routines, please include
+complete specification documents as much as possible so that other developers
+and I can understand how they work clearly.
+
+I have a copy of VAX Aritecture Handbook (1st edition - 1987) and VAX Internal
+and Data Sturctures Handbook.  I am looking for a copy of 2nd edition (1991)
+for complete vector instructions and other latest models.
+
+
+VAX Emulator Developement Status
+--------------------------------
+
+VAX Emulator currently supports three different series: KA630, KA65x,
+and KA780.  All instructions passed HCORE tests for CVAX (KA650) series.
+
+Module Completed
+----------------
+MicroVAX II Series        - Almost finished.
+MicroVAX 3800/3900 Series - Almost finished.
+VAX-11/780 Series         - Under development.
+
+Module Not Implemented Yet
+--------------------------
+MicroVAX 3100 Series
+
+MicroVAX 3100 Series:
+
+I does not have a copy of KA4x ROM images at this time.  Does anyone
+have a copy of KA42/KA43 ROM images and a copy of 3100 tech manuals?
+If so, please let me know that.  Thank you.
+
+VAX-11/780 Series:
+
+Now I have 11/780 hardware docs (from DFWCUG web site).  They now are
+under development at this time.  I have docs about how to load and run
+VMB.EXE program from boot drive.
+
+Instructions to run the emulator
+--------------------------------
+
+This TS10 emulator now have socket interface so that you can telnet into
+the TS10 emulator by usint telnet command.
+
+$ telnet <hostname> <port>
+
+With TS10 default, its port is 5000.  You can change it in a dev_cty.h file.
+
+To run the TS10 emulator system first: (If no TS10> prompt displayed,
+just press CR key to print it.)
+
+$ ./ts10 -f ka630.cfg
+  -------------------
+TS10>
+
+
+To enter the VAX system on other xterm or terminal, type:
+
+$ telnet localhost 5000
+  ---------------------
+Welcome to VAX Emulator
+
+
+Then run system at TS10> prompt for MicroVAX II:
+
+TS10> boot cpu0
+      ---------
+
+Then do something on xterm that you are telneting into.  That is all.
+
+For more information about TS10/VAX commands, just press '?' to list
+commads with usage information.
+
+Thank you!
+
+Tim Stark
+sword7@speakeasy.org

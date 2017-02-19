@@ -1,0 +1,31 @@
+RP/RM - Disk Drives
+-------------------
+* A bug was found and fixed.  It cause TOPS-20 to crash with
+  DIRPG0 BUGHLT message.
+
+TM02/TM03 - Tape Formattor/Drives
+---------------------------------
+
+v0.8.2 - 5-29-2001 By Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------------
+* All write functions initially were implemented and tested.
+* Hard-cored write lock settings were removed.
+
+v0.8.1 - 5-3-2001 By Timothy Stark <sword7@speakeasy.org>
+---------------------------------------------------------
+* A bug in space forward/reverse function had been fixed.
+  It cause the ATA set failure that lead TOPS-20 operating
+  system to report overdue data errors.
+
+v0.8 - 5-2-2001 By Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------
+* A bug in space reverse function had been fixed that
+  prevent systems from perform space reverse.  SMTAPE
+  system finally worked when you enter any dskxx command.
+
+TCU150 - Time Clock Unit
+------------------------
+
+v0.1 - 4-9-2001 By Timothy Stark <sword7@speakeasy.org>
+-------------------------------------------------------
+* Initial TCU150 (Time Clock Unit 150) had been created.

@@ -1,0 +1,44 @@
+v0.7 8/28/02 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------
+* Fixed a bug in SocketHandler that cause DELQA emulation to stall
+  frequently because some unread was left in Linux kernel during SIGIO
+  callback.  After it was fixed, DELQA now is smooth and reliable.
+  For more information, check ChangeLog file in 'emu' directory.
+* Implemented the setup packet parser to extract ethernet addresses,
+  set flags for promiscious or all multicasts, etc.
+* Added Unit header to QNA device and Changed all devName and keyName
+  to Unit.devName and Unit.keyName variables.  Also, renamed all keyName
+  to devName so that debug.log will show more specific XQA0: instead of
+  DELQA:, etc. 
+* Added 'info' command to display Ethernet controller information.
+
+v0.6a 5/17/02 by Timothy Stark <sword7@speakeasy.org>
+-----------------------------------------------------
+* Created a new create routine and removed old create and
+  setup routines.
+* Removed a patch from the setup packet routine because it blocked
+  OpenVMS from receiving packets from outside and I learned that
+  a bug in NetBSD 1.5.2 according to NetBSD/vax port mailing list.
+  I now was able telnet or ftp into OpenVMS from outside or via.
+
+v0.6 3/20/02 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------
+* Added key names of DELQA and DESQA to Unibus/Qbus list.
+* Changed transmission routines to allow send all frames outgoing
+  instead of just one frame at once.  After it was fixed,
+  DEQNA get much further.  Transmission timers will be implemented
+  soon.
+* Made a patch on the setup packet routines for some tests.
+  It will be removed when all problems have been resolved.
+
+v0.5 3/18/02 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------
+* Fixed a bug that TS10 emulator system crashes into segmentation
+  fault when NetBSD/vax attempted to initialize DELQA controller
+  during boot time.  NetBSD/vax uses positive number as buffer length
+  instead of negative number.  Fixed it by changed to 'absolute value'
+  of number.
+
+v0.2 3/16/02 by Timothy Stark <sword7@speakeasy.org>
+----------------------------------------------------
+* First Public Release
