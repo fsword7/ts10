@@ -146,8 +146,16 @@ VMT_TAPE *OpenTape(char *fileName)
 		return NULL;
 	vmt->fileName = (char *)malloc(strlen(fileName)+1);
 	strcpy(vmt->fileName, fileName);
+	vmt->Flags = VMT_WRLOCK;
 	if (rc = vmt_OpenTape(vmt)) {
-		printf("Reason: %d\n", rc);
+		switch (rc) {
+		case VMT_OPENERR:
+			printf("File %s: %s", fileName, strerror(vmt->errCode));
+			break;
+		default:
+			printf("Reason: %d\n", rc);
+			break;
+		}
 		if (vmt->fileName)
 			free(vmt->fileName);
 		free(vmt);
@@ -176,6 +184,8 @@ int main(int argc, char **argv)
 	}
 
 	vmt = OpenTape(argv[1]);
+	if (vmt == NULL)
+		return 1;
 	DumpTape(vmt);
 	CloseTape(vmt);
 	return 0;

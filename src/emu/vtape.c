@@ -330,8 +330,8 @@ int tps_Rewind(VMT_TAPE *vmt)
 VMT_FORMAT vmt_Formats[] =
 {
 //	{ "tpc", "Tape data with Counts",   VMT_FMT_TPC },
-	{ "tps", "Tape data, SIMH Format",  VMT_FMT_TPS,
-     tps_Read, tps_Write, tps_Mark, tps_Erase, tps_Skip, tps_Rewind },
+	{ "tap", "Tape data, SIMH Format",  VMT_FMT_TPS,
+		tps_Read, tps_Write, tps_Mark, tps_Erase, tps_Skip, tps_Rewind },
 	{ NULL }  // Null Terminator
 };
 
@@ -370,7 +370,7 @@ int vmt_OpenTape(VMT_TAPE *vmt)
 		return VMT_NOFMT;
 	vmt->Format = fmt;
 
-	// Attempt to open a disk file.
+	// Attempt to open a tape file.
 	umode = (vmt->Flags & VMT_WRLOCK) ? O_RDONLY : O_RDWR|O_CREAT;
 	if ((vmt->dpFile = open(vmt->fileName, umode, 0700)) < 0) {
 		vmt->errCode = errno;
