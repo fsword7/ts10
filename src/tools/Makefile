@@ -8,7 +8,7 @@ LIBS =
 DUMP_OBJS = dump.o ../emu/vtape.o
 DUMP_OBJS2 = dump.o vtape.o
 
-dump: ${DUMP_OBJS}
+dump10: ${DUMP_OBJS}
 	${CC} ${LDFLAGS} -o $@ ${DUMP_OBJS2} ${LIBS}
 
 .c.o:
