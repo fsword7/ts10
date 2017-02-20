@@ -1,3 +1,10 @@
+# Project files
+.DS_Store
+/Debug/
+/.settings/
+.cproject
+.project
+
 # Object files
 *.o
 *.ko
