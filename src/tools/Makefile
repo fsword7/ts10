@@ -5,8 +5,8 @@ LDFLAGS = -g
 INCLUDES = -I.. -I.
 LIBS = 
 
-DUMP_OBJS = dump.o ../emu/vtape.o
-DUMP_OBJS2 = dump.o vtape.o
+DUMP_OBJS = dump10.o ../emu/vtape.o
+DUMP_OBJS2 = dump10.o vtape.o
 
 dump10: ${DUMP_OBJS}
 	${CC} ${LDFLAGS} -o $@ ${DUMP_OBJS2} ${LIBS}
@@ -15,5 +15,4 @@ dump10: ${DUMP_OBJS}
 	${CC} ${CFLAGS} ${INCLUDES} $<
 
 clean:
-	@rm -f *.o
-	@rm -f dump
+	@rm -f *.o dump10 dump10.exe

@@ -39,4 +39,4 @@ clean:
 	cd pdp10; make clean
 	cd pdp11; make clean
 	cd vax; make clean
-	@rm -f ts10 ${TS10_LIBS}
+	@rm -f ts10 ts10.exe ${TS10_LIBS}

@@ -170,9 +170,13 @@ int main(int argc, char **argv)
 {
 	VMT_TAPE *vmt;
 
+	if (argc < 2) {
+		printf("Usage: dump10 <tape file>");
+		return 1;
+	}
+
 	vmt = OpenTape(argv[1]);
 	DumpTape(vmt);
 	CloseTape(vmt);
 	return 0;
 }
-
